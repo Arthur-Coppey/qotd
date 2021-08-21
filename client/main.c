@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     puts("payload sent");
 
     char response[2048];
-    if (recv(sock, response, 2048, 0)) {
+    if (recv(sock, response, 2048, 0) < 0) {
         puts("receive failed");
         return 4;
     }

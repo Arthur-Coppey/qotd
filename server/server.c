@@ -6,8 +6,11 @@
 
 void tcpServer() {
     int serverSocket, clientSocket;
+    long read_size;
     unsigned long addressLength;
     struct sockaddr_in serverAddress, clientAddress;
+    char quote[MESSAGE_STRING_LENGTH] = "";
+    char clientMessage[MESSAGE_STRING_LENGTH] = "";
 
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = INADDR_ANY;
@@ -30,15 +33,30 @@ void tcpServer() {
     puts("server listening");
 
     addressLength = sizeof(struct sockaddr_in);
-    clientSocket = accept(serverSocket, (struct sockaddr *) &clientAddress, (socklen_t *) addressLength);
+    while ((clientSocket = accept(serverSocket, (struct sockaddr *) &clientAddress, (socklen_t *) &addressLength)) >= 0) {
+        puts("client connected");
+
+        /*receive data*/
+        while ((read_size = recv(clientSocket, clientMessage, MESSAGE_STRING_LENGTH, 0))) {
+            if (read_size < 0) {
+                puts("receive failed");
+            } else {
+                printf("client says: %s\n", clientMessage);
+
+                /*send data*/
+                getRandomQuote(quote);
+                printf("responding: \"%s\"\n", quote);
+                write(clientSocket, quote, strlen(quote));
+            }
+        }
+
+        puts("client disconnected");
+    }
+
     if (clientSocket < 0) {
         puts("client connection failed");
         exit(3);
     }
-    puts("client connected");
-
-    write(clientSocket, "test", strlen("test"));
-    // TODO: listen and respond
 }
 
 void udpServer() {

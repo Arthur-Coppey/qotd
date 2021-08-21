@@ -12,6 +12,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "quote.h"
+
+#define MESSAGE_STRING_LENGTH 2048
+
 void tcpServer();
 
 void udpServer();
