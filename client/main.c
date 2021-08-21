@@ -43,8 +43,7 @@ int main(int argc, char *argv[]) {
         puts("receive failed");
         return 4;
     }
-    puts("server response :");
-    puts(response);
+    printf("server response : %s\n", response);
 
     close(sock);
 

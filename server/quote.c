@@ -12,7 +12,6 @@ void getRandomQuote(char quote[1024]) {
 
 void getQuote(int line, char quote[1024]) {
     FILE* list;
-//    char quote[1024];
 
     // TODO: get specified x line
 
