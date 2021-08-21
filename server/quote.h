@@ -6,11 +6,17 @@
 #define QOTD_QUOTE_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <bits/types/FILE.h>
 #include <bits/types/struct_FILE.h>
 
-void getRandomQuote(char quote[1024]);
+#define QUOTES_FILE "./quotes.txt"
 
-void getQuote(int line, char quote[1024]);
+void getRandomQuote(char quote[2048]);
+
+void getQuote(long line, char quote[2048]);
+
+int getFileLineCount(char* filename);
 
 #endif //QOTD_QUOTE_H

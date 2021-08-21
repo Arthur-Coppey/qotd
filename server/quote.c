@@ -4,20 +4,54 @@
 
 #include "quote.h"
 
-void getRandomQuote(char quote[1024]) {
-    // TODO: true random between 0 and number of lines in file
-    int rand = 0;
-    getQuote(rand, quote);
+void getRandomQuote(char quote[2048]) {
+    int lineCount;
+    long line;
+
+    if ((lineCount = getFileLineCount(QUOTES_FILE)) == -1) {
+        puts("file does not exist");
+        exit(-1);
+    }
+
+    line = random() % lineCount;
+
+    getQuote(line, quote);
 }
 
-void getQuote(int line, char quote[1024]) {
+void getQuote(long line, char quote[2048]) {
     FILE* list;
 
-    // TODO: get specified x line
+    list = fopen(QUOTES_FILE, "r");
 
-    list = fopen("quotes.txt", "r");
-
-    fgets(quote, 1024, list);
+    /*skip lines*/
+    while (line > 0) {
+        if (fgetc(list) == '\n') {
+            line--;
+        }
+    }
+    fgets(quote, 2048, list);
+    quote[strlen(quote) - 1] = '\0';
 
     fclose(list);
+}
+
+int getFileLineCount(char *filename) {
+    char c;
+    int lineCount = 0;
+    FILE* quotesFile = fopen(filename, "r");
+
+    if (quotesFile == NULL) {
+        printf("no quote file found at \"%s\"\n", filename);
+        return -1;
+    }
+
+    while ((c = (char) fgetc(quotesFile)) != EOF) {
+        if (c == '\n') {
+            lineCount++;
+        }
+    }
+
+    fclose(quotesFile);
+
+    return lineCount;
 }
