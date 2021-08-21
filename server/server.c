@@ -24,8 +24,10 @@ void tcpServer() {
         puts("bind failed");
         exit(2);
     }
+    puts("address bound");
 
     listen(serverSocket, 5);
+    puts("server listening");
 
     addressLength = sizeof(struct sockaddr_in);
     clientSocket = accept(serverSocket, (struct sockaddr *) &clientAddress, (socklen_t *) addressLength);

@@ -23,17 +23,20 @@ int main(int argc, char *argv[]) {
         puts("socket not created");
         return 1;
     }
+    puts("socket created");
 
     if (connect(sock, (const struct sockaddr *) &server, sizeof(server)) < 0) {
         puts("connection failed");
         return 2;
     }
+    puts("connected to server");
 
     char *payload = "I dream of sushi";
     if (send(sock, payload, strlen(payload), 0) < 0) {
         puts("error while sending payload");
         return 3;
     }
+    puts("payload sent");
 
     char response[2048];
     if (recv(sock, response, 2048, 0)) {
