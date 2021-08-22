@@ -26,8 +26,8 @@ make
 ```
 
 ## Use
-
+Server as root (because port 17)
 ```sh
-./server
-./client
+# ./server
+$ ./client
 ```
