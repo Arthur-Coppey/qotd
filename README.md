@@ -1,5 +1,5 @@
 # qotd
-A RFC 865 compliant Quote of the Day ~~daemon~~ program
+A [RFC 865](https://datatracker.ietf.org/doc/html/rfc865) compliant Quote of the Day ~~daemon~~ program
 
 ## Done
 * get random quote within file
