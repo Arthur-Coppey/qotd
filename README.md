@@ -26,6 +26,8 @@ make
 ```
 
 ## Use
+A "quotes.txt" file in the same folder as the server containing one quote per line. Quotes are separated by the line feed ('\n') caracter.
+
 Server as root (because port 17)
 ```sh
 # ./server
