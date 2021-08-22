@@ -14,3 +14,20 @@ A RFC 865 compliant Quote of the Day ~~daemon~~ program
 * logging ?
 * conf files ?
 * switches (-x) and options (--xxxx) ?
+
+## Installation
+
+```sh
+git clone https://github.com/Arthur-Coppey/qotd
+cd qotd
+cmake -B build
+cd build
+make
+```
+
+## Use
+
+```sh
+./server
+./client
+```
