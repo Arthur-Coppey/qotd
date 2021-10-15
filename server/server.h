@@ -6,11 +6,14 @@
 #define QOTD_SERVER_H
 
 #include <sys/socket.h>
+//#include <sys/types.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include "quote.h"
 
@@ -18,6 +21,6 @@
 
 void tcpServer();
 
-void udpServer();
+_Noreturn void udpServer();
 
 #endif //QOTD_SERVER_H
