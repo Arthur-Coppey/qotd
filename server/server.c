@@ -34,7 +34,7 @@ void tcpServer() {
     puts("socket created");
 
     /*bind socket to address:port*/
-    if (bind(serverSocket, (const struct sockaddr *) &serverAddress, sizeof serverAddress) < 0) {
+    if (bind(serverSocket, (const struct sockaddr *) &serverAddress, addressLength) < 0) {
         puts("bind failed");
         exit(2);
     }
