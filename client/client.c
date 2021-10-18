@@ -4,6 +4,8 @@
 
 #include "client.h"
 
+extern int errno;
+
 int tcp() {
     struct sockaddr_in server;
     int sock;
@@ -50,6 +52,7 @@ int tcp() {
 int udp() {
     struct sockaddr_in server;
     int sock;
+    unsigned long addressLength = sizeof server;
 
     int proto = IPPROTO_UDP;
     enum __socket_type socketType = SOCK_DGRAM;
@@ -66,15 +69,17 @@ int udp() {
     puts("socket created");
 
     char *payload = "I dream of sushi";
-    if (sendto(sock, payload, strlen(payload), 0, (const struct sockaddr *) &server, sizeof server) < 0) {
+    if (sendto(sock, payload, strlen(payload), 0, (const struct sockaddr *) &server, addressLength) < 0) {
         puts("error while sending payload");
+        perror("sendto");
         return 3;
     }
     puts("payload sent");
 
     char response[2048];
-    if (recvfrom(sock, response, 2048, 0, (struct sockaddr *) &server, (socklen_t *) sizeof server) < 0) {
+    if (recvfrom(sock, response, 2048, 0, (struct sockaddr *) &server, (socklen_t *) &addressLength) < 0) {
         puts("receive failed");
+        perror("recvfrom");
         return 4;
     }
     printf("server response : %s\n", response);
