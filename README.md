@@ -5,10 +5,10 @@ A [RFC 865](https://datatracker.ietf.org/doc/html/rfc865) compliant Quote of the
 * get random quote within file
 * tcp server
 * tcp client
-
-## Todo
 * udp server
 * udp client
+
+## Todo
 * t h r e a d s to accept several clients and/or run both udp and tcp servers from same executable
 * macros (#define XXX yyy) for currently hard-coded values
 * logging ?
