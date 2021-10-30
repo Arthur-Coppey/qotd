@@ -10,23 +10,60 @@
 extern int errno;
 
 unsigned long addressLength = sizeof(struct sockaddr_in);
+long recvLen;
+int sock, serverSocket, clientSocket, socketType, socketProtocol;
+struct sockaddr_in serverAddress, clientAddress;
+struct sockaddr_in serverAddress4, clientAddress4;
+struct sockaddr_in6 serverAddress6, clientAddress6;
+char quote[MESSAGE_STRING_LENGTH] = "";
+char clientMessage[MESSAGE_STRING_LENGTH] = "";
 
+void server(int tcp, int ipv6) {
+    // TODO: things common between tcp/udp here
+    // init sock info
+    memset(&serverAddress, 0, addressLength);
+    memset(&clientAddress, 0, addressLength);
+
+    if (ipv6) {
+        serverAddress6.sin6_family = AF_INET6;
+        serverAddress6.sin6_addr = in6addr_any;
+        serverAddress6.sin6_port = htons(17);
+    } else {
+        serverAddress.sin_family = AF_INET;
+        serverAddress.sin_addr.s_addr = INADDR_ANY;
+        serverAddress.sin_port = htons(17);
+    }
+
+    // create sock
+    if (tcp) {
+        socketType = SOCK_STREAM;
+        socketProtocol = IPPROTO_TCP;
+    } else {
+        socketType = SOCK_DGRAM;
+        socketProtocol = IPPROTO_UDP;
+    }
+
+    serverSocket = socket(serverAddress.sin_family, socketType, socketProtocol);
+    if (serverSocket == -1) {
+        puts("socket not created");
+        exit(1);
+    }
+    puts("socket created");
+
+    // bind sock
+}
 
 void tcpServer() {
-    int serverSocket, clientSocket;
-    long recvLen;
-//    unsigned long addressLength = sizeof(struct sockaddr_in);
-    struct sockaddr_in serverAddress, clientAddress;
-    char quote[MESSAGE_STRING_LENGTH] = "";
-    char clientMessage[MESSAGE_STRING_LENGTH] = "";
-
     /*initialize socket info*/
+    memset(&serverAddress, 0, addressLength);
+    memset(&clientAddress, 0, addressLength);
+
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = INADDR_ANY;
     serverAddress.sin_port = htons(17);
 
     /*create socket*/
-    serverSocket = socket(serverAddress.sin_family, SOCK_STREAM, IPPROTO_IP);
+    serverSocket = socket(serverAddress.sin_family, SOCK_STREAM, IPPROTO_TCP);
     if (serverSocket == -1) {
         puts("socket not created");
         exit(1);
@@ -74,12 +111,6 @@ void tcpServer() {
 }
 
 _Noreturn void udpServer() {
-    int sock;
-//    unsigned long addressLength = sizeof(struct sockaddr_in);
-    struct sockaddr_in serverAddress, clientAddress;
-    char quote[MESSAGE_STRING_LENGTH] = "";
-    char clientMessage[MESSAGE_STRING_LENGTH] = "";
-
     /*initialize sock info*/
     memset(&serverAddress, 0, addressLength);
     memset(&clientAddress, 0, addressLength);
@@ -97,23 +128,22 @@ _Noreturn void udpServer() {
     puts("sock created");
 
     /*bind sock to address:port*/
-    if (bind(sock, (const struct sockaddr *) &serverAddress, sizeof serverAddress) < 0) {
+    if (bind(sock, (const struct sockaddr *) &serverAddress, addressLength) < 0) {
         puts("bind failed");
         exit(2);
     }
     puts("address bound");
 
-    /*accept connections*/
     //TODO: t h r e a d s ?
-    while (1) {
+    for (;;) {
         /*receive data*/
-        int recvLen = recvfrom(sock, clientMessage, MESSAGE_STRING_LENGTH, 0,
+        recvLen = recvfrom(sock, clientMessage, MESSAGE_STRING_LENGTH, 0,
                                (struct sockaddr *) &clientAddress, (socklen_t *) &addressLength);
 
         uint16_t port = ntohs(clientAddress.sin_port);
         char *ipv4 = inet_ntoa(clientAddress.sin_addr);
 
-        printf("recvLen = %d from = %s:%d\nmsg = `%s`\n", recvLen, ipv4, port, clientMessage);
+        printf("recvLen = %ld from = %s:%d\nmsg = `%s`\n", recvLen, ipv4, port, clientMessage);
 
         perror("recvfrom");
         if (recvLen >= 0) {

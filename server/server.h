@@ -19,6 +19,8 @@
 
 #define MESSAGE_STRING_LENGTH 2048
 
+void server(int tcp, int ipv6);
+
 void tcpServer();
 
 _Noreturn void udpServer();
