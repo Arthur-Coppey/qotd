@@ -12,6 +12,7 @@ extern int errno;
 unsigned long addressLength = sizeof(struct sockaddr_in);
 long recvLen;
 int sock, serverSocket, clientSocket, socketType, socketProtocol;
+struct sockaddr * srvAddr;
 struct sockaddr_in serverAddress, clientAddress;
 struct sockaddr_in serverAddress4, clientAddress4;
 struct sockaddr_in6 serverAddress6, clientAddress6;
@@ -28,10 +29,12 @@ void server(int tcp, int ipv6) {
         serverAddress6.sin6_family = AF_INET6;
         serverAddress6.sin6_addr = in6addr_any;
         serverAddress6.sin6_port = htons(17);
+        srvAddr = (struct sockaddr *) &serverAddress6;
     } else {
-        serverAddress.sin_family = AF_INET;
-        serverAddress.sin_addr.s_addr = INADDR_ANY;
-        serverAddress.sin_port = htons(17);
+        serverAddress4.sin_family = AF_INET;
+        serverAddress4.sin_addr.s_addr = INADDR_ANY;
+        serverAddress4.sin_port = htons(17);
+        srvAddr = (struct sockaddr *) &serverAddress4;
     }
 
     // create sock
@@ -43,7 +46,7 @@ void server(int tcp, int ipv6) {
         socketProtocol = IPPROTO_UDP;
     }
 
-    serverSocket = socket(serverAddress.sin_family, socketType, socketProtocol);
+    serverSocket = socket(srvAddr->sa_family, socketType, socketProtocol);
     if (serverSocket == -1) {
         puts("socket not created");
         exit(1);
@@ -51,6 +54,13 @@ void server(int tcp, int ipv6) {
     puts("socket created");
 
     // bind sock
+    if (bind(serverSocket, srvAddr, addressLength) < 0) {
+        puts("bind failed");
+        exit(2);
+    }
+
+    // TODO: udp/tcp
+
 }
 
 void tcpServer() {
