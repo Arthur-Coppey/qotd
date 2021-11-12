@@ -1,10 +1,8 @@
 #include "server.h"
 
 int main(int argc, char *argv[]) {
-//    char quote[1024];
-//    getRandomQuote(quote);
-//    printf("%s\n", quote);
-    tcpServer();
+    // TODO: shell args
+    server(1, 1);
 
     return 0;
 }
