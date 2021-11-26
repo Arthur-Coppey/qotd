@@ -3,6 +3,7 @@
 //
 
 #include "server.h"
+#include "config.h"
 
 //TODO: object-like C
 
@@ -71,7 +72,7 @@ void server(int tcp, int ipv6) {
     if (ipv6) {
         serverAddress6.sin6_family = AF_INET6;
         serverAddress6.sin6_addr = in6addr_any;
-        serverAddress6.sin6_port = htons(17);
+        serverAddress6.sin6_port = htons(DEFAULT_LISTEN_PORT);
         serverAddress = (struct sockaddr *) &serverAddress6;
         serverAddressLength = sizeof serverAddress6;
 
@@ -81,7 +82,7 @@ void server(int tcp, int ipv6) {
     } else {
         serverAddress4.sin_family = AF_INET;
         serverAddress4.sin_addr.s_addr = INADDR_ANY;
-        serverAddress4.sin_port = htons(17);
+        serverAddress4.sin_port = htons(DEFAULT_LISTEN_PORT);
         serverAddress = (struct sockaddr *) &serverAddress4;
         serverAddressLength = sizeof serverAddress4;
 

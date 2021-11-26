@@ -3,6 +3,7 @@
 //
 
 #include "quote.h"
+#include "config.h"
 
 void getRandomQuote(char quote[2048]) {
     int lineCount;
