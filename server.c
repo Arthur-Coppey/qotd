@@ -10,22 +10,22 @@
 extern int errno;
 
 _Noreturn void udpListen(int serverSocket, struct sockaddr * clientAddress, unsigned long addressLength) {
-    int recvLen;
     char clientMessage[MESSAGE_STRING_LENGTH], quote[MESSAGE_STRING_LENGTH];
 
     for (;;) {
         // receive data
-        recvLen = recvfrom(serverSocket, clientMessage, MESSAGE_STRING_LENGTH, 0, clientAddress, (socklen_t *) &addressLength);
 
-        perror("recvfrom");
-        if (recvLen >= 0) {
-            printf("client says: %s\n", clientMessage);
+        if (recvfrom(serverSocket, clientMessage, MESSAGE_STRING_LENGTH, 0, clientAddress, (socklen_t *) &addressLength) >= 0) {
+            printf("received: %s\n", clientMessage);
 
             // send data
             getRandomQuote(quote);
-            printf("responding: `%s`\n", quote);
-            sendto(serverSocket, quote, strlen(quote), 0, clientAddress, addressLength);
-            perror("sendto");
+            printf("sending: %s\n", quote);
+            if (sendto(serverSocket, quote, strlen(quote), 0, clientAddress, addressLength) == -1) {
+                perror("udp: sendto");
+            }
+        } else {
+            perror("udp: recvfrom");
         }
     }
 }
@@ -39,21 +39,26 @@ void tcpListen(int serverSocket, struct sockaddr * clientAddress, unsigned long 
 
     // accept connections
     //TODO: t h r e a d s
-    while ((clientSocket = accept(serverSocket, clientAddress, (socklen_t *) &addressLength)) >=
-           0) {
+    while ((clientSocket = accept(serverSocket, clientAddress, (socklen_t *) &addressLength)) >= 0) {
         puts("client connected");
 
         // receive data
-        while (recv(clientSocket, clientMessage, MESSAGE_STRING_LENGTH, 0) >= 0) {
+        if (recv(clientSocket, clientMessage, MESSAGE_STRING_LENGTH, 0) >= 0) {
             printf("client says: %s\n", clientMessage);
 
             // send data
             getRandomQuote(quote);
             printf("responding: \"%s\"\n", quote);
-            send(clientSocket, quote, strlen(quote), 0);
+            if (send(clientSocket, quote, strlen(quote), 0) == -1) {
+                perror("tcp: send");
+            }
+        } else {
+            perror("tcp: recv");
         }
 
-        puts("client disconnected");
+        close(clientSocket);
+
+        puts("closed connection");
     }
 
     if (clientSocket < 0) {
