@@ -6,7 +6,7 @@
 #define QOTD_SERVER_H
 
 #include <sys/socket.h>
-//#include <sys/types.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
@@ -17,10 +17,10 @@
 
 #include "quote.h"
 
-#define MESSAGE_STRING_LENGTH 2048
+void server(int tcp, int ipv6);
 
-void tcpServer();
+void tcpListen(int serverSocket, struct sockaddr *clientAddress, unsigned long addressLength);
 
-_Noreturn void udpServer();
+_Noreturn void udpListen(int serverSocket, struct sockaddr *clientAddress, unsigned long addressLength);
 
 #endif //QOTD_SERVER_H
