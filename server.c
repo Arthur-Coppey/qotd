@@ -68,9 +68,8 @@ void tcpListen(int serverSocket, struct sockaddr * clientAddress, unsigned long 
 }
 
 void server(int tcp, int ipv6) {
-    int serverSocket, socketType, socketProtocol;
-    unsigned long serverAddressLength, clientAddressLength;
-    struct sockaddr *serverAddress, *clientAddress;
+    int socketType, socketProtocol;
+    struct sockinfo server, client;
     struct sockaddr_in serverAddress4, clientAddress4;
     struct sockaddr_in6 serverAddress6, clientAddress6;
 
@@ -78,22 +77,24 @@ void server(int tcp, int ipv6) {
         serverAddress6.sin6_family = AF_INET6;
         serverAddress6.sin6_addr = in6addr_any;
         serverAddress6.sin6_port = htons(DEFAULT_LISTEN_PORT);
-        serverAddress = (struct sockaddr *) &serverAddress6;
-        serverAddressLength = sizeof serverAddress6;
+
+        server.address = (struct sockaddr *) &serverAddress6;
+        server.addressLength = sizeof serverAddress6;
 
         clientAddress6.sin6_family = AF_INET6;
-        clientAddress = (struct sockaddr *) &clientAddress6;
-        clientAddressLength = sizeof clientAddress6;
+        client.address = (struct sockaddr *) &clientAddress6;
+        client.addressLength = sizeof clientAddress6;
     } else {
         serverAddress4.sin_family = AF_INET;
         serverAddress4.sin_addr.s_addr = INADDR_ANY;
         serverAddress4.sin_port = htons(DEFAULT_LISTEN_PORT);
-        serverAddress = (struct sockaddr *) &serverAddress4;
-        serverAddressLength = sizeof serverAddress4;
+
+        server.address = (struct sockaddr *) &serverAddress4;
+        server.addressLength = sizeof serverAddress4;
 
         clientAddress4.sin_family = AF_INET;
-        clientAddress = (struct sockaddr *) &clientAddress4;
-        clientAddressLength = sizeof clientAddress4;
+        client.address = (struct sockaddr *) &clientAddress4;
+        client.addressLength = sizeof clientAddress4;
     }
 
     if (tcp) {
@@ -105,23 +106,23 @@ void server(int tcp, int ipv6) {
     }
 
     // create sock
-    serverSocket = socket(serverAddress->sa_family, socketType, socketProtocol);
-    if (serverSocket == -1) {
+    server.handle = socket(server.address->sa_family, socketType, socketProtocol);
+    if (server.handle == -1) {
         puts("socket not created");
         exit(1);
     }
     puts("socket created");
 
     // bind sock
-    if (bind(serverSocket, serverAddress, serverAddressLength) < 0) {
+    if (bind(server.handle, server.address, server.addressLength) < 0) {
         puts("bind failed");
         exit(2);
     }
 
     // TODO: threads to run both at the same time
     if (tcp) {
-        tcpListen(serverSocket, clientAddress, clientAddressLength);
+        tcpListen(server.handle, client.address, client.addressLength);
     } else {
-        udpListen(serverSocket, clientAddress, clientAddressLength);
+        udpListen(server.handle, client.address, client.addressLength);
     }
 }

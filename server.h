@@ -14,8 +14,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <pthread.h>
 
 #include "quote.h"
+
+struct sockinfo {
+    int handle;
+    struct sockaddr * address;
+    unsigned long addressLength;
+};
 
 void server(int tcp, int ipv6);
 
