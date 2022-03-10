@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&threadHandle, &attr, (void *(*)(void *)) threadTest, "a");
     void * ret;
     pthread_join(threadHandle, &ret);
-    puts(ret);
+    printf("%d", ret);
 //    server(1, 1);
 
     return 0;
