@@ -9,8 +9,13 @@
 
 extern int errno;
 
-_Noreturn void udpListen(int serverSocket, struct sockaddr * clientAddress, unsigned long addressLength) {
+_Noreturn void udpListen(void * sock) {
+    struct sockinfo * socket = (struct sockinfo *) sock;
+
     char clientMessage[MESSAGE_STRING_LENGTH], quote[MESSAGE_STRING_LENGTH];
+    int serverSocket = socket->handle;
+    struct sockaddr * clientAddress = socket->address;
+    unsigned long addressLength = socket->addressLength;
 
     for (;;) {
         // receive data
@@ -30,9 +35,14 @@ _Noreturn void udpListen(int serverSocket, struct sockaddr * clientAddress, unsi
     }
 }
 
-void tcpListen(int serverSocket, struct sockaddr * clientAddress, unsigned long addressLength) {
+void tcpListen(void * sock) {
+    struct sockinfo * socket = (struct sockinfo *) sock;
+
     int clientSocket;
     char quote[MESSAGE_STRING_LENGTH] = "", clientMessage[MESSAGE_STRING_LENGTH] = "";
+    int serverSocket = socket->handle;
+    struct sockaddr * clientAddress = socket->address;
+    unsigned long addressLength = socket->addressLength;
 
     listen(serverSocket, 5);
     puts("server listening");
@@ -120,9 +130,17 @@ void server(int tcp, int ipv6) {
     }
 
     // TODO: threads to run both at the same time
-    if (tcp) {
-        tcpListen(server.handle, client.address, client.addressLength);
-    } else {
-        udpListen(server.handle, client.address, client.addressLength);
-    }
+    pthread_t tcpHandle, udpHandle;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_create(&tcpHandle, &attr, (void *(*)(void *)) tcpListen, (void *) &server);
+    pthread_create(&udpHandle, &attr, (void *(*)(void *)) udpListen, (void *) &server);
+    void * tcpReturn, * udpReturn;
+    pthread_join(tcpHandle, tcpReturn);
+    pthread_join(udpHandle, udpReturn);
+//    if (tcp) {
+//        tcpListen(&server);
+//    } else {
+//        udpListen(&server);
+//    }
 }

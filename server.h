@@ -26,8 +26,8 @@ struct sockinfo {
 
 void server(int tcp, int ipv6);
 
-void tcpListen(int serverSocket, struct sockaddr *clientAddress, unsigned long addressLength);
+void tcpListen(void * socket);
 
-_Noreturn void udpListen(int serverSocket, struct sockaddr *clientAddress, unsigned long addressLength);
+_Noreturn void udpListen(void * socket);
 
 #endif //QOTD_SERVER_H
