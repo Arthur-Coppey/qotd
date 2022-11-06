@@ -5,6 +5,8 @@
 #include "quote.h"
 #include "config.h"
 
+//TODO: error handling
+
 void getRandomQuote(char quote[2048]) {
     int lineCount;
     long line;

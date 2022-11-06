@@ -21,13 +21,13 @@
 struct sockinfo {
     int handle;
     struct sockaddr * address;
-    unsigned long addressLength;
+    socklen_t addressLength;
 };
 
 void server(int tcp, int ipv6);
 
-void tcpListen(void * socket);
+void tcpListen(void * args[]);
 
-_Noreturn void udpListen(void * socket);
+_Noreturn void udpListen(void * args[]);
 
 #endif //QOTD_SERVER_H
