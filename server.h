@@ -24,7 +24,7 @@ struct sockinfo {
     socklen_t addressLength;
 };
 
-void server(int tcp, int ipv6);
+void server();
 
 void tcpListen(void * args[]);
 
